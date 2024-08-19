@@ -42,7 +42,7 @@ jobs:
       - name: restart backend container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 192.168.64.114
+          host: 192.168.64.114:8128
           username: test
           key: ${{ secrets.SSH_KEY }}
           port: 22
@@ -96,7 +96,7 @@ jobs:
       - name: restart frontend container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 192.168.64.114
+          host: 192.168.64.114:8128
           username: test
           key: ${{ secrets.SSH_KEY }}
           port: 22
