@@ -38,6 +38,25 @@ jobs:
         with:
           push: true
           tags: jukiri/testbackend:1.0
+
+      - name: restart backend container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 192.168.64.114
+          username: test
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            kubectl apply -f - <<EOF
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: backend
+            spec:
+              containers:
+                - name: backend
+                  image: jukiri/testbackend:1.0
+            EOF
           
 
   frontend-deploy:
@@ -73,3 +92,22 @@ jobs:
         with:
           push: true
           tags: jukiri/testfrontend:1.0
+
+      - name: restart frontend container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 192.168.64.114
+          username: test
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            kubectl apply -f - <<EOF
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: frontend
+            spec:
+              containers:
+                - name: frontend
+                  image: jukiri/testfrontend:1.0
+            EOF
