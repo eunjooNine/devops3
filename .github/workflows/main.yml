@@ -1,0 +1,71 @@
+name: devops test
+
+on:
+  push:
+    branches: [ frontend, backend ]
+
+jobs:
+  backend-deploy:
+    if: github.ref == 'refs/heads/backend'
+    name: Deploy to K8S backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew docker -Pplatform=backend
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push jukiri/testbackend:0.0.1-SNAPSHOT
+          
+
+  frontend-deploy:
+    if: github.ref == 'refs/heads/frontend'
+    name: Deploy to K8S frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew docker
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push jukiri/testfrontend:0.0.1-SNAPSHOT

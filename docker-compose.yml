@@ -1,0 +1,12 @@
+version: '3'
+services:
+  backend:
+#    도커파일에서 쓴 변수를 바로 쓸 수 없으니까 다시 변수주기
+    image: jukiri/testbackend:${DOCKER_IMAGE_TAG}
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: jukiri/testfrontend:${DOCKER_IMAGE_TAG}
+    ports:
+      - "80:80"
