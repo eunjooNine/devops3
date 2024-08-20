@@ -33,11 +33,10 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: push
-        uses: docker/build-push-action@v6
+      - name: Push Backend Docker image
+        uses: actions-hub/docker@master
         with:
-          push: true
-          tags: jukiri/testbackend:1.0
+          args: push jukiri/testbackend:1.0
 
       - name: restart backend container
         uses: appleboy/ssh-action@v1.0.3
@@ -91,11 +90,10 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: push
-        uses: docker/build-push-action@v6
+      - name: Push Frontend Docker image
+        uses: actions-hub/docker@master
         with:
-          push: true
-          tags: jukiri/testfrontend:1.0
+          args: push jukiri/testfrontend:1.0
 
       - name: restart frontend container
         uses: appleboy/ssh-action@v1.0.3
